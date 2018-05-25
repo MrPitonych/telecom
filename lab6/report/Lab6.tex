@@ -1,0 +1,187 @@
+\documentclass[10pt,a4paper,oneside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage[russian]{babel}%Подключаем русский язык.
+\usepackage{graphicx}
+\usepackage{geometry} % Меняем поля страницы.
+\geometry{left=3cm} %Левое поле.
+\geometry{right=2cm} %Правое поле.
+\geometry{top=3cm} %Верхнее поле.
+\geometry{bottom=2cm} %Нижнее поле.
+
+%Начало документа
+\begin{document}
+\begin{titlepage}
+	\begin{center}
+		Санкт-Петербургский Политехнический Университет     Петра Великого \\
+		
+		Институт компьютерных наук и технологий \\
+		
+		Кафедра компьютерных систем и программных технологий
+	\end{center}
+	
+	\vfill
+	
+	\begin{center}
+		Лабораторная работа №6\\
+		по теме\\
+		"Цифровая модуляция"\\
+	\end{center}
+	
+	\vfill
+	
+	\newlength{\ML}
+	\settowidth{\ML}{«\underline{\hspace{0.7cm}}» \underline{\hspace{2cm}}}
+	\hfill\begin{minipage}{0.4\textwidth}
+		Выполнил студент группы 33501/3\\
+		\underline{\hspace{\ML}} Ромащенко Д.\,Ю\\
+	\end{minipage}%
+	
+	\bigskip
+	
+	\settowidth{\ML}{«\underline{\hspace{0.7cm}}» \underline{\hspace{2cm}}}
+	\hfill\begin{minipage}{0.4\textwidth}
+		Руководитель\\
+		\underline{\hspace{\ML}} Богач Н.\,В\\
+	\end{minipage}%
+	
+	\vfill
+	
+	\begin{center}
+		Санкт-Петербург\\
+		2018 
+	\end{center}
+	
+\end{titlepage}
+
+
+%Первый параграф - Цель работы.
+\section{Цель работы}
+Изучение методов модуляции цировых сигналов.
+
+%Второй параграф - Постановка задачи.
+\section{Постановка задачи}
+\begin{enumerate}
+\item Получить сигналы BPSK, PSK, OQPSK, genQAM, MSK модуляторов.
+\item Построить их сигнальные созвездия.
+\item Провести сравнение изученных методов модуляции цифровых сигналов.
+\end{enumerate}
+
+%Третий параграф - Теоретическая часть.
+\section{Теоретическая часть}
+Цифровая модуляция и демодуляция включают в себя две стадии. При модуляции цифровое сообщение сначала преобразуется в аналоговый модулирующий сигнал с помощью функции modmap, а затем осуществляется аналоговая модуляция. При демодуляции сначала получается аналоговый демодулированный сигнал, а затем он преобразуется в цифровое сообщение с помощью функции demodmap.
+
+Аналоговый несущий сигнал модулируется цифровым битовым потоком.
+Существуют три фундаментальных типа цифровой модуляции (или шифтинга) и один гибридный:
+\begin{enumerate}
+	\item ASK – Amplitude shift keying (Амплитудная двоичная модуляция).
+	\item FSK – Frequency shift keying (Частотая двоичная модуляция).
+	\item PSK – Phase shift keying (Фазовая двоичная модуляция).
+	\item ASK/PSK.
+\end{enumerate}
+Одна из частных реализаций схемы ASK/PSK, которая называется QAM - Quadrature Amplitude Modulation (квадратурная амплитудная модуляция (КАМ). Это метод объединения двух AM-сигналов в одном канале. Он позваляет удвоить эффективную пропускную способность. В QAM используется две несущих с одинаковой частотой но с разницей в фазе на четверть периода (отсюда и возникает слово квадратура). 
+Частотная модуляция представляет логическую единицу интервалом с большей частотой, чем ноль.
+Фазовый шифтинг представляет «0» как сигнал без сдвига, а «1» как сигнал со сдвигом.
+
+BPSK : используется единственный сдвиг фазы между «0» и «1» — 180 градусов, половина периода.
+Существуют также QPSK:
+QPSK использует 4 различных сдвига фазы (по четверти периода) и может кодировать 2 бита в символе (01, 11, 00, 10). 
+\newpage
+\section{Ход работы}
+Реализуем различные типы модуляции в Matlab:
+\begin{verbatim}
+%BPSK
+h = modem.pskmod('M', 4);
+g = modem.pskdemod('M', 4);
+msg = randi([0 3],10,1)
+modSignal = modulate(h,msg);
+errSignal = (randerr(1, 10, 3) ./ 30)';
+modSignal = modSignal + errSignal;
+demodSignal = demodulate(g,modSignal);
+scatterplot(modSignal)
+\end{verbatim}
+
+\begin{figure}[h]
+	\center{\includegraphics[width=0.6\linewidth]{BPSK}} 
+	\caption{Сигнальное созвездие BPSK}
+\end{figure}
+\newpage
+\begin{verbatim}
+%PSK
+h = modem.pskmod('M', 8);
+g = modem.pskdemod('M', 8);
+msg = randi([0 7],10,1)
+modSignal = modulate(h,msg);
+errSignal = (randerr(1, 10, 3) ./ 30)';
+modSignal = modSignal + errSignal;
+demodSignal = demodulate(g,modSignal);
+scatterplot(modSignal)
+\end{verbatim}
+
+\begin{figure}[h]
+	\center{\includegraphics[width=0.6\linewidth]{PSK}} 
+	\caption{Сигнальное созвездие PSK}
+\end{figure}
+
+\newpage
+\begin{verbatim}
+%OQPSK
+h = modem.oqpskmod;
+g = modem.oqpskdemod;
+msg = randi([0 99],1,4)
+modSignal = modulate(h,msg);
+errSignal = (randerr(1, 200, 100) ./ 30)';
+modSignal = modSignal + errSignal;
+demodSignal = demodulate(g,modSignal);
+scatterplot(modSignal)
+\end{verbatim}
+\begin{figure}[h]
+	\center{\includegraphics[width=0.6\linewidth]{OQPSK}} 
+	\caption{Сигнальное созвездие OQPSK}
+\end{figure}
+
+\newpage
+\begin{verbatim}
+%genQAM
+M = 10;
+h = modem.genqammod('Constellation', exp(j*2*pi*[0:M-1]/M));
+g = modem.genqamdemod('Constellation', exp(j*2*pi*[0:M-1]/M));
+msg = randi([0 9],100,1);
+modSignal = modulate(h,msg);
+errSignal = (randerr(1,100, 3) ./ 30)';
+modSignal = modSignal + errSignal;
+demodSignal = demodulate(g,modSignal);
+scatterplot(modSignal);
+\end{verbatim}
+\begin{figure}[h]
+	\center{\includegraphics[width=0.6\linewidth]{genQAM}} 
+	\caption{Сигнальное созвездие genQAM}
+\end{figure}
+
+\newpage
+\begin{verbatim}
+%MSK
+h = modem.mskmod('SamplesPerSymbol', 10);
+g = modem.mskdemod('SamplesPerSymbol', 10);
+msg = randi([0 1],10,1);
+modSignal = modulate(h, msg);
+errSignal = (randerr(1, 100, 3) ./ 30)';
+modSignal = modSignal + errSignal;
+demodSignal = demodulate(g, modSignal);
+scatterplot(modSignal);
+\end{verbatim}
+\begin{figure}[h]
+	\center{\includegraphics[width=0.6\linewidth]{MASK}} 
+	\caption{Сигнальное созвездие MSK}
+\end{figure}
+
+
+\section{Вывод\\\\}
+В данной работе мы изучили различные виды фазовой, частотной и амплитудной модуляции цифровых сигналов.
+В фазовой модуляции PSK фаза несущего колебания имеет фиксированные позиции с одинаковым шагом, соответствующие цифровой посылке. С этим видом модуляции возникают проблемы синхронизации из-за трудности однозначной интерпретации поворота созвездия.
+Квадратурная амплитудная модуляция характеризуется изменением и фазы, и амплитуды, из-за чего растёт информационная плотность.
+Модуляция с минимальным сдвигом является примером частотной манипуляции, в ней нет фазовых ступеней, а частота изменяется в момент пересечения несущей нулевого уровня. Бинарный PSK хоть и имеет низкую плотность информации ввиду всего двух ступеней фаз, но обладает большой помехоустойчивостью благодаря большой дистанции между этими двумя состояниями.
+\end{document}
